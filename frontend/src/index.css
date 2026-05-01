@@ -1,0 +1,40 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary:    #2563EB;
+  --primary-dk: #1D4ED8;
+  --primary-lt: #EFF6FF;
+  --accent:     #F97316;
+  --bg:         #F8FAFC;
+  --surface:    #FFFFFF;
+  --border:     #E2E8F0;
+  --border-lt:  #F1F5F9;
+  --text:       #1E293B;
+  --text-md:    #475569;
+  --text-sm:    #94A3B8;
+  --success:    #10B981;
+  --radius-sm:  8px;
+  --radius:     12px;
+  --radius-lg:  16px;
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.08);
+  --shadow:     0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.10);
+}
+
+body {
+  font-family: 'Work Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root { height: 100vh; display: flex; flex-direction: column; }
+
+/* Day palette */
+.day-1 { --day-color: #2563EB; }
+.day-2 { --day-color: #F97316; }
+.day-3 { --day-color: #10B981; }
+.day-4 { --day-color: #8B5CF6; }
+.day-5 { --day-color: #EC4899; }
