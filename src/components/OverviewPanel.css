@@ -1,0 +1,75 @@
+.overview {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.overview-top { display: flex; flex-direction: column; gap: 4px; }
+
+.overview-city {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.4px;
+}
+
+.overview-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-md);
+}
+.overview-meta .dot {
+  width: 3px; height: 3px; border-radius: 50%; background: var(--text-sm);
+}
+
+/* Day bars */
+.day-bars {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.day-bar { display: flex; flex-direction: column; gap: 4px; }
+
+.day-bar-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 11px;
+}
+.day-bar-label  { font-family: 'Outfit', sans-serif; font-weight: 700; }
+.day-bar-stats  { color: var(--text-sm); font-variant-numeric: tabular-nums; }
+
+.day-bar-track {
+  display: flex;
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.day-bar-visit, .day-bar-travel {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.day-legend-row {
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  color: var(--text-sm);
+  margin-top: 2px;
+}
+.day-legend-row span { display: inline-flex; align-items: center; gap: 5px; }
+.lg-swatch {
+  width: 14px; height: 8px; border-radius: 2px;
+  display: inline-block;
+}
+.lg-solid   { background: var(--text-sm); }
+.lg-hatched {
+  background: repeating-linear-gradient(45deg, var(--text-sm) 0 3px, transparent 3px 6px);
+}

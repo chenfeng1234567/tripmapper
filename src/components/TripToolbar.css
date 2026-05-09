@@ -1,0 +1,60 @@
+.toolbar {
+  height: 56px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+
+.toolbar-brand { display: flex; align-items: center; gap: 10px; }
+.toolbar-logo  { width: 22px; height: 22px; color: var(--primary); }
+
+.toolbar-titles h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+}
+.toolbar-sub { font-size: 11px; color: var(--text-sm); }
+
+.toolbar-actions { display: flex; align-items: center; gap: 8px; }
+
+.tb-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.tb-btn svg { width: 14px; height: 14px; }
+
+.tb-btn.ghost {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-md);
+}
+.tb-btn.ghost:hover:not(:disabled) {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.tb-btn.primary {
+  background: var(--primary);
+  color: #fff;
+}
+.tb-btn.primary:hover:not(:disabled) { background: var(--primary-dk); }
+
+.tb-btn:disabled { opacity: 0.45; cursor: not-allowed; }

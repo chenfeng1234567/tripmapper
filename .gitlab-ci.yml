@@ -1,0 +1,15 @@
+# GitLab Pages build for TripMapper.
+# `npm run build` outputs the static site to ./public, which GitLab Pages then
+# publishes automatically.
+
+pages:
+  image: node:20-alpine
+  stage: deploy
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
