@@ -9,6 +9,10 @@ public/
 .DS_Store
 **/.DS_Store
 
+# Excel lock files (created when the spreadsheet is open)
+~$*.xlsx
+~$*.xls
+
 # Claude Code config (IDE-specific, machine-specific)
 .claude/
 

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TripMapper — Write-up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #2563EB;
+      --bg:      #F8FAFC;
+      --surface: #FFFFFF;
+      --border:  #E2E8F0;
+      --text:    #1E293B;
+      --text-md: #475569;
+      --text-sm: #94A3B8;
+    }
+    body {
+      font-family: 'Work Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 96px; }
+
+    .breadcrumb {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    .breadcrumb:hover { text-decoration: underline; }
+    .breadcrumb svg { width: 14px; height: 14px; }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.6px;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      font-size: 15px;
+      color: var(--text-sm);
+      margin-bottom: 40px;
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      margin: 40px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 24px 0 8px;
+      color: var(--text);
+    }
+    p { margin-bottom: 14px; color: var(--text-md); }
+    p strong { color: var(--text); }
+
+    ul, ol { margin: 8px 0 16px 24px; }
+    li { color: var(--text-md); margin-bottom: 6px; }
+    li strong { color: var(--text); }
+
+    a { color: var(--primary); }
+
+    code {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 0.9em;
+      background: var(--bg);
+      padding: 1px 5px;
+      border-radius: 4px;
+      color: var(--text);
+    }
+
+    blockquote {
+      border-left: 3px solid var(--primary);
+      background: #EFF6FF;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-style: italic;
+      color: var(--text-md);
+      border-radius: 0 6px 6px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 20px;
+      font-size: 13.5px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    th { background: var(--surface); font-weight: 600; color: var(--text); }
+    td { color: var(--text-md); }
+
+    .todo {
+      background: #FFFBEB;
+      border: 1px solid #FDE68A;
+      padding: 12px 16px;
+      border-radius: 8px;
+      color: #92400E;
+      font-size: 13.5px;
+    }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-sm);
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <a class="breadcrumb" href="./index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12" />
+        <polyline points="12 19 5 12 12 5" />
+      </svg>
+      Back to TripMapper
+    </a>
+
+    <h1>TripMapper — Write-up</h1>
+    <p class="subtitle">CSE 512 · Assignment 3 · Interactive Visualization</p>
+
+    <h2>1. The question</h2>
+    <blockquote>
+      Given a trip plan — a list of places spread across days, with travel
+      time and mode between them — how can a traveler quickly see the
+      <em>shape</em> of the trip, and then refine it on the spot?
+    </blockquote>
+    <p>
+      A spreadsheet of stops is easy to write but hard to read. A static map
+      shows geography but loses the schedule. TripMapper joins both views and
+      adds a small set of interactive techniques so the same data can answer
+      questions like:
+    </p>
+    <ul>
+      <li>Which day is the most travel-heavy?</li>
+      <li>Show me only the food stops.</li>
+      <li>What's the quickest route through Day 2 if I reorder it by distance?</li>
+      <li>Move this museum from Day 1 to Day 2 — does the day still fit?</li>
+      <li>What's the address again? Click a marker.</li>
+    </ul>
+
+    <h2>2. Design rationale</h2>
+
+    <h3>Encoding day on the marker, category inside it</h3>
+    <p>
+      A trip is fundamentally a sequence, so the eye should trace day-routes
+      first. We encode the <strong>day</strong> with the marker's ring color
+      (the same color as the polyline that connects the stops on that day) so
+      the route reads as a single visual unit. <strong>Category</strong> is
+      shown as a small emoji glyph inside the ring — it answers "what kind of
+      stop is this?" in a glance without competing with the route encoding.
+      A small numbered badge in the corner gives the order within the day.
+    </p>
+
+    <h3>Two-layer day bars in the overview</h3>
+    <p>
+      For each day we render a small bar split into a solid block (time spent
+      <em>at</em> stops) and a hatched block (time <em>in transit</em>). This
+      surfaces patterns like "Day 3 is mostly driving" without forcing the
+      reader to do mental arithmetic on the schedule.
+    </p>
+
+    <h3>Travel-time pills sit on the route, not on the markers</h3>
+    <p>
+      The pills with travel time and mode emoji float at the midpoint of each
+      polyline segment. This puts the schedule visually <em>on</em> the route
+      rather than next to a stop, and we made the pills non-interactive so
+      they never block marker clicks.
+    </p>
+
+    <h3>Sidebar mirrors the map</h3>
+    <p>
+      Filters, sort controls, day chips, and the place list all reflect the
+      same data subset. Selecting a stop in either view updates the other —
+      multi-view coordination without a third "details" pane to keep in sync.
+    </p>
+
+    <h3>Dynamic queries, brushing, and direct manipulation</h3>
+    <p>
+      We layered three classic interaction techniques from the readings:
+    </p>
+    <ul>
+      <li><strong>Dynamic queries.</strong> Day filter (single-select) and
+          category filter (multi-toggle) re-render the map and the list
+          immediately, no apply button.</li>
+      <li><strong>Brushing-by-encoding.</strong> Selecting one stop dims all
+          other markers so the chosen stop pops out without losing context.</li>
+      <li><strong>Direct manipulation.</strong> Stops can be edited, added,
+          deleted, or reordered within a day right from the panel; the map
+          updates synchronously. The trip can be exported back to
+          <code>.xlsx</code>, closing the loop with the user's source data.</li>
+    </ul>
+
+    <h3>Alternatives we considered</h3>
+    <ul>
+      <li><strong>Marker color = category, line color = day.</strong> Tried
+          first; harder to scan because the marker is the more salient mark
+          and category was competing with day for attention. Reversed.</li>
+      <li><strong>Tabs per day with no "all days" view.</strong> Cleaner per
+          screen but we lost the cross-day overview. Final design keeps tabs
+          <em>and</em> an "All" mode with day dividers in the list.</li>
+      <li><strong>Drag-and-drop reorder.</strong> Nicer than up/down buttons,
+          but pulled in a dependency for marginal gain. Left for the final
+          project.</li>
+      <li><strong>Heatmap of stop density.</strong> Considered for "where is
+          this trip clustered?" but redundant with the polylines on a small
+          number of stops. Skipped.</li>
+      <li><strong>An LLM trip generator</strong> (the original prototype).
+          Removed because the assignment rewards exploratory interaction on
+          a chosen dataset, not generation quality, and the API dependency
+          conflicted with the static-site deployment requirement.</li>
+    </ul>
+
+    <h2>3. References</h2>
+    <ul>
+      <li><strong>Map tiles:</strong>
+          <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a>
+          contributors (tile layer + place coordinates).</li>
+      <li><strong>Map library:</strong>
+          <a href="https://leafletjs.com/" target="_blank" rel="noopener">Leaflet</a>
+          via
+          <a href="https://react-leaflet.js.org/" target="_blank" rel="noopener">react-leaflet</a>.</li>
+      <li><strong>Spreadsheet I/O:</strong>
+          <a href="https://sheetjs.com/" target="_blank" rel="noopener">SheetJS (xlsx)</a>
+          for reading and writing
+          <code>.xlsx</code> files entirely in the browser.</li>
+      <li><strong>UI framework:</strong>
+          <a href="https://react.dev/" target="_blank" rel="noopener">React</a>
+          + <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a>.</li>
+      <li><strong>Visual reference:</strong>
+          <a href="https://www.pitravel.cn/" target="_blank" rel="noopener">pitravel.cn</a>
+          — for the side-by-side list-and-map layout and the travel-time pills
+          on the route.</li>
+      <li><strong>Course readings:</strong> Ahlberg &amp; Shneiderman 1994
+          (dynamic queries / brushing); Wattenberg 2005 (NameVoyager) — both
+          shaped how we approached filter responsiveness and incremental
+          exploration.</li>
+    </ul>
+    <p>
+      The Seattle sample data is hand-curated from public information;
+      coordinates are from OpenStreetMap.
+    </p>
+
+    <h2>4. Development process</h2>
+
+    <h3>Team</h3>
+    <div class="todo">
+      <strong>TODO — fill in before submitting.</strong>
+      List each team member: name, UW email, GitLab username, and a short
+      sentence about what they owned (e.g. map / filters / sample data /
+      write-up).
+    </div>
+
+    <h3>Time spent</h3>
+    <div class="todo">
+      <strong>TODO — fill in before submitting.</strong>
+      Total person-hours and a rough split, e.g. "≈ 24 person-hours total —
+      ~10h on the map and marker design, ~6h on filters and the edit modal,
+      ~4h on the sample data and Excel I/O, ~4h on styling and the write-up."
+    </div>
+
+    <h3>What took the most time</h3>
+    <p>
+      <em>(Suggested talking points — adjust to your team's experience.)</em>
+    </p>
+    <ul>
+      <li><strong>Marker design.</strong> Making day color, category, and
+          order all legible inside one ~32 px circle without it looking busy
+          went through several iterations.</li>
+      <li><strong>Keeping the map and list in sync.</strong> Re-rendering
+          polylines, travel pills, and selection state correctly whenever a
+          filter changes (without flicker or stale layers) was the trickiest
+          piece of the React/Leaflet integration.</li>
+      <li><strong>Round-tripping Excel.</strong> Supporting both upload of
+          arbitrary <code>.xlsx</code> files (with case-insensitive columns,
+          missing fields, validation messages) and export back to
+          <code>.xlsx</code> took longer than expected.</li>
+    </ul>
+
+    <h3>How the work was split</h3>
+    <div class="todo">
+      <strong>TODO — fill in before submitting.</strong>
+      One short paragraph per teammate, or a small table.
+    </div>
+
+    <footer>
+      Source on GitLab. Built with React, Leaflet, and SheetJS for CSE 512 (Spring 2026).
+    </footer>
+  </main>
+</body>
+</html>
