@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # TripMapper
 
 An interactive map-based view of a multi-day trip. Open an Excel file
@@ -97,3 +98,4 @@ React · Vite · Leaflet (via react-leaflet) · SheetJS (`xlsx`) · OpenStreetMa
 Read the [write-up](static/writeup.html) for the question this visualization
 answers, the design rationale behind the visual encodings and interaction
 techniques, references, and the team's development process.
+=======

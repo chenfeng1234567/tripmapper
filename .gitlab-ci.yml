@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GitLab Pages build for TripMapper.
 # `npm run build` outputs the static site to ./public, which GitLab Pages then
 # publishes automatically.
